@@ -93,7 +93,6 @@ def repl(temperature=0.8):
             print(response)
     except (KeyboardInterrupt, EOFError):
         print()
-    return 0
 
 
 if __name__ == '__main__':
