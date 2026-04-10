@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/cmc-cs040-preslie/__init__.py
+src/cmc-cs040-preslie/chat.py
+src/cmc_cs040_preslie.egg-info/PKG-INFO
+src/cmc_cs040_preslie.egg-info/SOURCES.txt
+src/cmc_cs040_preslie.egg-info/dependency_links.txt
+src/cmc_cs040_preslie.egg-info/entry_points.txt
+src/cmc_cs040_preslie.egg-info/requires.txt
+src/cmc_cs040_preslie.egg-info/top_level.txt
