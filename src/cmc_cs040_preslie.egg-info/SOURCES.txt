@@ -1,7 +1,7 @@
 README.md
 pyproject.toml
-src/cmc-cs040-preslie/__init__.py
-src/cmc-cs040-preslie/chat.py
+src/cmc_cs040_preslie/__init__.py
+src/cmc_cs040_preslie/chat.py
 src/cmc_cs040_preslie.egg-info/PKG-INFO
 src/cmc_cs040_preslie.egg-info/SOURCES.txt
 src/cmc_cs040_preslie.egg-info/dependency_links.txt

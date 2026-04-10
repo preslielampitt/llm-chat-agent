@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cmc-cs040-preslie"
-version = "0.1.4"
+version = "0.1.6"
 description = "LLM-based chat/document summarization project for CSC040"
 readme = "README.md"
 requires-python = ">=3.11"

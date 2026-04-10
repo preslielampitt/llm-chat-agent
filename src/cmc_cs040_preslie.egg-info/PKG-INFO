@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: cmc-cs040-preslie
-Version: 0.1.4
+Version: 0.1.6
 Summary: LLM-based chat/document summarization project for CSC040
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
