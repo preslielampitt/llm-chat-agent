@@ -24,7 +24,6 @@ jobs:
       - name: Run integration test
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: pip install cmc-cs040-preslie
         run: |
           chat <<'EOF'
           I am bob.
