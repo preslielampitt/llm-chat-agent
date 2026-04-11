@@ -6,9 +6,9 @@ def cat(filename):
     True
     >>> cat('this_file_does_not_exist.txt')
     'File not found'
-    >>> cat('__pycache__/chat.cpython-314.pyc')
+    >>> cat('cmc_cs040_preslie/__pycache__/chat.cpython-314.pyc')
     'File is not a readable text file'
-    >>> cat('__pycache__')
+    >>> cat('.github/workflows')
     'Error reading file'
     '''
     try:
