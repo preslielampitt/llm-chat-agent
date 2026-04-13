@@ -1,0 +1,9 @@
+[submodule "test_projects/preslielampitt.github.io"]
+	path = test_projects/preslielampitt.github.io
+	url = https://github.com/preslielampitt/preslielampitt.github.io
+[submodule "test_projects/markdown-compiler"]
+	path = test_projects/markdown-compiler
+	url = https://github.com/preslielampitt/markdown-compiler
+[submodule "test_projects/ebay-webscraper"]
+	path = test_projects/ebay-webscraper
+	url = https://github.com/preslielampitt/ebay-webscraper

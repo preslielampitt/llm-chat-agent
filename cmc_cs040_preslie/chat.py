@@ -4,6 +4,7 @@ from groq import Groq
 from .tools.calculate import calculate, calculate_tool_schema
 from .tools.cat import cat, cat_tool_schema
 from .tools.ls import ls, ls_tool_schema
+from .tools.grep import grep, grep_tool_schema
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -30,7 +31,7 @@ class Chat:
         self.messages = [
             {
                 "role": "system",
-                "content": "Write the output in 1-2 sentences. Always use tools to complete tasks when appropriate."
+                "content": "Write the output in 1-2 sentences. Always use tools when appropriate, but if the needed information is already in the conversation history, answer from that context instead of calling a tool again."
             },
         ]
     def send_message(self, message, temperature=0.8):
@@ -42,7 +43,7 @@ class Chat:
                 'content': message
             }
         )
-        tools = [calculate_tool_schema, cat_tool_schema, ls_tool_schema]  
+        tools = [calculate_tool_schema, cat_tool_schema, ls_tool_schema, grep_tool_schema]  
 
         # in order to make non deterministic code deterministic: 
         # in this case, has a 'temperature' param that controls randomness: 
@@ -68,6 +69,7 @@ class Chat:
                 "calculate": calculate,
                 "ls": ls,
                 "cat": cat,
+                "grep": grep,
             }
             
             # Add the assistant's response to conversation
@@ -94,8 +96,13 @@ class Chat:
                     function_response = function_to_call(
                         filename=function_args.get("filename")
                     )
+                elif function_name == "grep":
+                    function_response = function_to_call(
+                        pattern=function_args.get("pattern"),
+                        path=function_args.get("path")
+                    )
 
-                print(f'[tool] function_name={function_name}, function_args={function_args}')
+                #print(f'[tool] function_name={function_name}, function_args={function_args}')
                 
                 # Add tool response to conversation
                 self.messages.append({
@@ -123,6 +130,85 @@ class Chat:
             })
         return result
 
+def repl(temperature=0.8):
+    '''
+    >>> def monkey_input(prompt, user_inputs=['/calculate 2+2']):
+    ...     try:
+    ...         user_input = user_inputs.pop(0)
+    ...         print(f'{prompt}{user_input}')
+    ...         return user_input
+    ...     except IndexError:
+    ...         raise KeyboardInterrupt
+    >>> import builtins
+    >>> builtins.input = monkey_input
+    >>> repl()
+    chat> /calculate 2+2
+    4
+    <BLANKLINE>
+
+    >>> def monkey_input(prompt, user_inputs=['/cat file_that_does_not_exist.txt']):
+    ...     try:
+    ...         user_input = user_inputs.pop(0)
+    ...         print(f'{prompt}{user_input}')
+    ...         return user_input
+    ...     except IndexError:
+    ...         raise KeyboardInterrupt
+    >>> builtins.input = monkey_input
+    >>> repl()
+    chat> /cat file_that_does_not_exist.txt
+    File not found
+    <BLANKLINE>
+    '''
+    import readline
+    chat = Chat()
+    try:
+        while True:
+            user_input = input('chat> ')
+
+            if user_input.startswith('/'):
+                parts = user_input[1:].split(maxsplit=1)
+                command = parts[0]
+                arg = parts[1] if len(parts) > 1 else None
+
+                if command == 'ls':
+                    response = ls(arg)
+                elif command == 'cat':
+                    response = cat(arg)
+                elif command == 'calculate':
+                    response = calculate(arg)
+                elif command == 'grep':
+                    if arg is None:
+                        response = 'Usage: /grep <pattern> <path>'
+                    else:
+                        grep_parts = arg.split(maxsplit=1)
+                        if len(grep_parts) < 2:
+                            response = 'Usage: /grep <pattern> <path>'
+                        else:
+                            response = grep(grep_parts[0], grep_parts[1])
+                else:
+                    response = 'Unknown command'
+
+                print(response)
+
+                chat.messages.append({
+                    'role': 'user',
+                    'content': user_input
+                })
+                chat.messages.append({
+                    'role': 'assistant',
+                    'content': str(response)
+                })
+                continue
+            
+            if chat is None:
+                chat = Chat()
+
+            response = chat.send_message(user_input, temperature=temperature)
+            print(response)
+    except (KeyboardInterrupt, EOFError):
+        print()
+
+'''
 # repl: reads input and evaluates input
 def repl(temperature=0.8):
     import readline
@@ -134,6 +220,7 @@ def repl(temperature=0.8):
             print(response)
     except (KeyboardInterrupt, EOFError):
         print()
+'''
 
 
 if __name__ == '__main__':
