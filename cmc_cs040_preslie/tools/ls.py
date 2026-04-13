@@ -1,15 +1,26 @@
 import glob
+from cmc_cs040_preslie.tools.path_utils import is_path_safe
+
 
 def ls(folder=None):
     '''
     This function behaves just like the ls program in the shell.
 
-    >>> ls()
-    'README.md cmc_cs040_preslie pyproject.toml requirements.txt'
-    
+    >>> result = ls()
+    >>> 'README.md' in result
+    True
+    >>> 'cmc_cs040_preslie' in result
+    True
+    >>> 'test_projects' in result
+    True
     >>> ls('cmc_cs040_preslie/tools')
-    'cmc_cs040_preslie/tools/__pycache__ cmc_cs040_preslie/tools/calculate.py cmc_cs040_preslie/tools/cat.py cmc_cs040_preslie/tools/ls.py '
+    'cmc_cs040_preslie/tools/__pycache__ cmc_cs040_preslie/tools/calculate.py cmc_cs040_preslie/tools/cat.py cmc_cs040_preslie/tools/grep.py cmc_cs040_preslie/tools/ls.py cmc_cs040_preslie/tools/path_utils.py '
+    >>> ls('../')
+    'Invalid path'
     '''
+    if not is_path_safe(folder):
+        return 'Invalid path'
+
     if folder is not None:
         result = ''
         # folder + '/*' ==> tools /*
@@ -25,6 +36,7 @@ def ls(folder=None):
         for path in sorted(glob.glob('*')):
             result += path + ' '
         return result.strip()
+
 
 ls_tool_schema = {
     "type": "function",

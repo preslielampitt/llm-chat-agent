@@ -1,41 +1,36 @@
 import glob
 import re
-
-def _is_safe_path(path):
-    return not (
-        path.startswith("/")
-        or ".." in path.split("/")
-    )
+from cmc_cs040_preslie.tools.path_utils import is_path_safe
 
 
 def grep(pattern, path):
     '''
     Search for lines matching a regex in files matched by a glob.
 
-    >>> grep('hello', 'chat.py')
+    >>> grep('hello', 'cmc_cs040_preslie/chat.py')
     ''
-    >>> grep('def', 'tools/*.py') != ''
+    >>> grep('def', 'cmc_cs040_preslie/tools/*.py') != ''
+    True
+    >>> 'def grep(pattern, path):' in grep('def grep', 'cmc_cs040_preslie/tools/grep.py')
     True
     >>> grep('abc', '../secret.txt')
     'Invalid path'
+    >>> grep('root', '/etc/passwd')
+    'Invalid path'
+    >>> grep('[', 'cmc_cs040_preslie/tools/*.py')
+    'Invalid regex'
     '''
-    if not _is_safe_path(path):
+    if not is_path_safe(path):
         return 'Invalid path'
 
     try:
         result = []
 
         for filename in sorted(glob.glob(path)):
-            try:
-                with open(filename, 'r', encoding='utf-8') as f:
-                    for line in f:
-                        if re.search(pattern, line):
-
-                            result.append(line.rstrip('\n'))
-            except FileNotFoundError:
-                continue
-            except UnicodeDecodeError:
-                continue
+            with open(filename, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if re.search(pattern, line):
+                        result.append(line.rstrip('\n'))
 
         return '\n'.join(result)
     except re.error:

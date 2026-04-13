@@ -1,13 +1,21 @@
-import json 
+import json
+
 
 def calculate(expression):
-    """Evaluate a mathematical expression"""
+    '''
+    Evaluate a mathematical expression
+
+    >>> calculate('4*4')
+    '16'
+    >>> calculate ('2+')
+    '{"error": "Invalid expression"}'
+    '''
     try:
-        result = eval(expression)  # Use safe evaluation in production
+        result = eval(expression)
         return str(result)
-        #return json.dumps({"result": result})
-    except:
+    except Exception:
         return json.dumps({"error": "Invalid expression"})
+
 
 calculate_tool_schema = {
     "type": "function",
