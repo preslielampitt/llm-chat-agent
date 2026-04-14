@@ -29,3 +29,10 @@ jobs:
           I am bob.
           What is my name?
           EOF
+      - name: Run debug integration test
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          output=$(chat --debug 'what files are in the .github folder?')
+          echo "$output"
+          echo "$output" | grep '\[tool\]'

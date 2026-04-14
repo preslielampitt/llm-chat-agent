@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-chat = "cmc_cs040_preslie.chat:repl"
+chat = "cmc_cs040_preslie.chat:main"
 
 [tool.setuptools.packages.find]
 include = ["cmc_cs040_preslie", "cmc_cs040_preslie.*"]

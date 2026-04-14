@@ -1,6 +1,7 @@
 import os
 import json
 from groq import Groq
+import sys
 from .tools.calculate import calculate, calculate_tool_schema
 from .tools.cat import cat, cat_tool_schema
 from .tools.ls import ls, ls_tool_schema
@@ -37,7 +38,7 @@ class Chat:
             },
         ]
 
-    def send_message(self, message, temperature=0.8):
+    def send_message(self, message, temperature=0.8, debug=False):
         self.messages.append({
             'role': 'user',
             'content': message
@@ -88,6 +89,16 @@ class Chat:
 
                 function_args = json.loads(tool_call.function.arguments)
 
+                if debug:
+                    if function_name == "calculate":
+                        print(f"[tool] /calculate {function_args.get('expression')}")
+                    elif function_name == "ls":
+                        print(f"[tool] /ls {function_args.get('folder')}")
+                    elif function_name == "cat":
+                        print(f"[tool] /cat {function_args.get('filename')}")
+                    elif function_name == "grep":
+                        print(f"[tool] /grep {function_args.get('pattern')} {function_args.get('path')}")
+
                 if function_name == "calculate":
                     function_response = function_to_call(
                         expression=function_args.get("expression")
@@ -120,7 +131,7 @@ class Chat:
         return result
 
 
-def repl(temperature=0.8):
+def repl(temperature=0.8, debug=False):
     '''
     >>> def monkey_input(prompt, user_inputs=['/calculate 2+2']):
     ...     try:
@@ -148,6 +159,21 @@ def repl(temperature=0.8):
     chat> /cat file_that_does_not_exist.txt
     File not found
     <BLANKLINE>
+
+    >>> def monkey_input(prompt, user_inputs=['/ls cmc_cs040_preslie']):
+    ...     try:
+    ...         user_input = user_inputs.pop(0)
+    ...         print(f'{prompt}{user_input}')
+    ...         return user_input
+    ...     except IndexError:
+    ...         raise KeyboardInterrupt
+    >>> import builtins
+    >>> builtins.input = monkey_input
+    >>> repl(debug=True)  # doctest: +ELLIPSIS
+    chat> /ls cmc_cs040_preslie
+    [tool] /ls cmc_cs040_preslie
+    ...
+    <BLANKLINE>
     '''
     chat = Chat()
     try:
@@ -158,6 +184,12 @@ def repl(temperature=0.8):
                 parts = user_input[1:].split(maxsplit=1)
                 command = parts[0]
                 arg = parts[1] if len(parts) > 1 else None
+
+                if debug:
+                    if arg is None:
+                        print(f'[tool] /{command}')
+                    else:
+                        print(f'[tool] /{command} {arg}')
 
                 if command == 'ls':
                     response = ls(arg)
@@ -189,11 +221,26 @@ def repl(temperature=0.8):
                 })
                 continue
 
-            response = chat.send_message(user_input, temperature=temperature)
+            response = chat.send_message(user_input, temperature=temperature, debug=debug)
             print(response)
     except (KeyboardInterrupt, EOFError):
         print()
 
 
+def main():
+    debug = False
+    args = sys.argv[1:]
+
+    if '--debug' in args:
+        debug = True
+        args.remove('--debug')
+
+    if args:
+        chat = Chat()
+        message = ' '.join(args)
+        print(chat.send_message(message, debug=debug))
+    else:
+        repl(debug=debug)
+
 if __name__ == '__main__':
-    repl()
+    main()
