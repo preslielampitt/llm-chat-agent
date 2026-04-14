@@ -1,6 +1,8 @@
 import os
 import json
 from groq import Groq
+import glob
+import readline
 import sys
 from .tools.calculate import calculate, calculate_tool_schema
 from .tools.cat import cat, cat_tool_schema
@@ -27,6 +29,14 @@ class Chat:
     >>> chat2 = Chat()
     >>> isinstance(chat2.send_message('what is my name?', temperature=0.0), str)
     True
+
+    >>> chat = Chat()
+    >>> chat.messages.append({'role': 'user', 'content': 'My name is Bob'})
+    >>> summary = chat.compact()
+    >>> isinstance(summary, str)
+    True
+    >>> len(chat.messages)
+    2
     '''
     def __init__(self):
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -129,6 +139,79 @@ class Chat:
             'content': result
         })
         return result
+    
+
+    def compact(self):
+        summarizer = Chat()
+
+        prompt = (
+            "Summarize this conversation in 1-5 lines. "
+            "Keep important facts, prior tool results, and user goals. "
+            "Do not include unnecessary detail."
+        )
+
+        summary_messages = [
+            {
+                "role": "system",
+                "content": prompt
+            }
+        ] + self.messages
+
+        response = summarizer.client.chat.completions.create(
+            model=self.MODEL,
+            messages=summary_messages,
+            temperature=0.0,
+            seed=0,
+        )
+
+        summary = response.choices[0].message.content
+
+        self.messages = [
+            {
+                "role": "system",
+                "content": "Write the output in 1-2 sentences. Always use tools when appropriate. Tools may only use relative paths inside the current working directory. Never use absolute paths or paths containing .. . If information is already in the conversation history, answer from that context instead of calling a tool again."
+            },
+            {
+                "role": "assistant",
+                "content": f"Conversation summary:\n{summary}"
+            }
+        ]
+
+        return summary
+
+
+COMMANDS = ['ls', 'cat', 'grep', 'calculate', 'compact']
+
+
+def command_completer(text, state):
+    buffer = readline.get_line_buffer()
+    parts = buffer.split()
+
+    matches = []
+
+    if buffer.startswith('/'):
+        if len(parts) == 0:
+            matches = [f'/{cmd}' for cmd in COMMANDS]
+        elif len(parts) == 1 and not buffer.endswith(' '):
+            prefix = parts[0][1:]
+            matches = [f'/{cmd}' for cmd in COMMANDS if cmd.startswith(prefix)]
+        else:
+            if buffer.endswith(' '):
+                path_prefix = ''
+            else:
+                path_prefix = parts[-1]
+
+            matches = sorted(glob.glob(path_prefix + '*'))
+
+            matches = [
+                m + '/' if os.path.isdir(m) and not m.endswith('/') else m
+                for m in matches
+            ]
+
+    try:
+        return matches[state]
+    except IndexError:
+        return None
 
 
 def repl(temperature=0.8, debug=False):
@@ -175,6 +258,9 @@ def repl(temperature=0.8, debug=False):
     ...
     <BLANKLINE>
     '''
+    readline.parse_and_bind("tab: complete")
+    readline.parse_and_bind("bind ^I rl_complete")
+    readline.set_completer(command_completer)
     chat = Chat()
     try:
         while True:
@@ -206,6 +292,8 @@ def repl(temperature=0.8, debug=False):
                             response = 'Usage: /grep <pattern> <path>'
                         else:
                             response = grep(grep_parts[0], grep_parts[1])
+                elif command == 'compact':
+                    response = chat.compact()
                 else:
                     response = 'Unknown command'
 
