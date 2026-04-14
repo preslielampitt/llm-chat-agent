@@ -139,7 +139,6 @@ class Chat:
             'content': result
         })
         return result
-    
 
     def compact(self):
         summarizer = Chat()
