@@ -28,6 +28,18 @@ Once running, type your messages and press Enter. Use `Ctrl+C` to exit.
 
 You can ask normal questions, or run manual slash commands such as `/ls`, `/cat`, `/grep`, and `/calculate`.
 
+The CLI also supports:
+
+one-shot command-line questions, such as chat "what files are in the .github folder?"
+a --debug flag to print tool calls as they happen
+tab completion for slash commands and file paths
+Examples:
+
+```bash
+chat --debug "what files are in the .github folder?"
+chat "what is this project about?"
+```
+
 ## Example: Webpage Project
 
 This example shows how the tool can inspect a web project and answer a question based on repository contents.
@@ -70,10 +82,14 @@ I checked the code and identified the main libraries imported by the scraper.
 ## Features
 
 - Conversational repository assistant powered by Groq
-- Automatic tool calling for `calculate`, `ls`, `cat`, and `grep`
+- Automatic tool calling for calculate, ls, cat, grep, and compact
 - Manual slash commands for direct tool execution
+- --debug mode that prints tool calls during execution
+- Command-line message support without entering the interactive REPL
+- Tab completion for slash commands and file paths
 - Path safety checks to block absolute paths and directory traversal
-- Doctest-based validation and integration testing
+- Conversation compaction to summarize chat history and reduce token usage
+- Doctest-based validation, integration testing, and style checks
 
 ## PyPI
 
