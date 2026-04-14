@@ -10,7 +10,7 @@ Project Chat Agent is a command-line assistant that answers questions about file
 
 ## Demo
 
-Animated terminal demo coming soon.
+![Demo](assets/demo.gif)
 
 ## Installation
 
