@@ -7,7 +7,6 @@ from cmc_cs040_preslie.tools.path_utils import is_path_safe
 def grep(pattern, path):
     '''
     Search for lines matching a regex in files matched by a glob.
-    
     >>> grep('hello', 'cmc_cs040_preslie/chat.py')
     ''
     >>> grep('def', 'cmc_cs040_preslie/tools/*.py') != ''
