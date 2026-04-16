@@ -49,6 +49,9 @@ class Chat:
         ]
 
     def send_message(self, message, temperature=0.8, debug=False):
+        '''
+        need a docstring (no tests is fine)
+        '''
         self.messages.append({
             'role': 'user',
             'content': message
@@ -141,24 +144,32 @@ class Chat:
         return result
 
     def compact(self):
+        # it's the right idea to use a Chat instance to compact;
+        # but it is a bit weird to create a new instance inside another instance
+        # this can lead to all sorts of memory management problems if you're
+        # not careful;
+        # in this case, though, I don't think there's problems;
+        # but for credit, this was required to be implemented as a tool
+        # (and so e.g. the AI could call it itself)
         summarizer = Chat()
 
-        prompt = (
-            "Summarize this conversation in 1-5 lines. "
-            "Keep important facts, prior tool results, and user goals. "
-            "Do not include unnecessary detail."
-        )
-
-        summary_messages = [
-            {
-                "role": "system",
-                "content": prompt
+        # I reformatted to be more pythonic
+        prompt = {
+            "role": "system",
+            "content": (
+                "Summarize this conversation in 1-5 lines. "
+                "Keep important facts, prior tool results, and user goals. "
+                "Do not include unnecessary detail."
+                )
             }
-        ] + self.messages
+        summary_messages = [prompt] + self.messages
 
         response = summarizer.client.chat.completions.create(
             model=self.MODEL,
             messages=summary_messages,
+            # in general, we don't want "magic numbers" in our code anywhere
+            # these would be better as parameters to the function with 
+            # default values
             temperature=0.0,
             seed=0,
         )
@@ -167,6 +178,9 @@ class Chat:
 
         self.messages = [
             {
+                # it's weird to duplicate the system prompt like this;
+                # better is to create a single class variable and set it from
+                # there everytime you need to recreate self.messages
                 "role": "system",
                 "content": "Write the output in 1-2 sentences. Always use tools when appropriate. Tools may only use relative paths inside the current working directory. Never use absolute paths or paths containing .. . If information is already in the conversation history, answer from that context instead of calling a tool again."
             },
@@ -183,6 +197,7 @@ COMMANDS = ['ls', 'cat', 'grep', 'calculate', 'compact']
 
 
 def command_completer(text, state):
+    # needs a docstring, but no doctests is fine
     buffer = readline.get_line_buffer()
     parts = buffer.split()
 
@@ -215,7 +230,11 @@ def command_completer(text, state):
 
 def repl(temperature=0.8, debug=False):
     '''
-    >>> def monkey_input(prompt, user_inputs=['/calculate 2+2']):
+    Need a docstring.
+
+    I cleaned your doctests a lot here;
+    your version had a lot of unneeded duplicate code
+    >>> def monkey_input(prompt):
     ...     try:
     ...         user_input = user_inputs.pop(0)
     ...         print(f'{prompt}{user_input}')
@@ -224,33 +243,20 @@ def repl(temperature=0.8, debug=False):
     ...         raise KeyboardInterrupt
     >>> import builtins
     >>> builtins.input = monkey_input
+
+    >>> user_inputs=['/calculate 2+2']
     >>> repl()
     chat> /calculate 2+2
     4
     <BLANKLINE>
 
-    >>> def monkey_input(prompt, user_inputs=['/cat file_that_does_not_exist.txt']):
-    ...     try:
-    ...         user_input = user_inputs.pop(0)
-    ...         print(f'{prompt}{user_input}')
-    ...         return user_input
-    ...     except IndexError:
-    ...         raise KeyboardInterrupt
-    >>> builtins.input = monkey_input
+    >>> user_inputs=['/cat file_that_does_not_exist.txt']
     >>> repl()
     chat> /cat file_that_does_not_exist.txt
     File not found
     <BLANKLINE>
 
-    >>> def monkey_input(prompt, user_inputs=['/ls cmc_cs040_preslie']):
-    ...     try:
-    ...         user_input = user_inputs.pop(0)
-    ...         print(f'{prompt}{user_input}')
-    ...         return user_input
-    ...     except IndexError:
-    ...         raise KeyboardInterrupt
-    >>> import builtins
-    >>> builtins.input = monkey_input
+    >>> ['/ls cmc_cs040_preslie']
     >>> repl(debug=True)  # doctest: +ELLIPSIS
     chat> /ls cmc_cs040_preslie
     [tool] /ls cmc_cs040_preslie
@@ -315,8 +321,12 @@ def repl(temperature=0.8, debug=False):
 
 
 def main():
+    '''
+    need a docstring
+    '''
     debug = False
     args = sys.argv[1:]
+    # better is to use argparse than to manually parse through the sys.argv list
 
     if '--debug' in args:
         debug = True
