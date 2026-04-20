@@ -33,6 +33,7 @@ The CLI also supports:
 - one-shot command-line questions, such as chat "what is this project about?"
 - a --debug flag to print tool calls as they happen
 - tab completion for slash commands and file paths
+
 Examples:
 
 ```bash
