@@ -1,14 +1,12 @@
 # Project Chat Agent
 
-Project Chat Agent is a command-line assistant that answers questions about files in the current repository and can use built-in tools such as `ls`, `cat`, `grep`, and `calculate`. It supports both automatic tool use through the language model and manual slash commands for fast, deterministic access to repository information.
-
 ![doctest](https://github.com/preslielampitt/llm-lab/actions/workflows/doctests.yml/badge.svg)
 ![integration-test](https://github.com/preslielampitt/llm-lab/actions/workflows/integration-tests.yml/badge.svg)
 ![Flake8](https://github.com/preslielampitt/llm-lab/actions/workflows/flake8.yml/badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/cmc-cs040-preslie)
-![Coverage](https://img.shields.io/badge/coverage-90%25-green)
+<!-- The Coverage badge needs to use coverage.io; the pypi badge should be a link to pypi (or include a link at the top, not at the bottom) -->
 
-## Demo
+Project Chat Agent is a command-line assistant that answers questions about files in the current repository and can use built-in tools such as `ls`, `cat`, `grep`, and `calculate`. It supports both automatic tool use through the language model and manual slash commands for fast, deterministic access to repository information.
 
 ![Demo](assets/demo.gif)
 
@@ -33,7 +31,6 @@ The CLI also supports:
 - one-shot command-line questions, such as chat "what is this project about?"
 - a --debug flag to print tool calls as they happen
 - tab completion for slash commands and file paths
-
 Examples:
 
 ```bash
@@ -45,7 +42,7 @@ chat --debug "what files are in the .github folder?"
 
 This example shows how the tool can inspect a web project and answer a question based on repository contents.
 
-```text
+```bash
 $ cd test_projects/preslielampitt.github.io
 $ chat
 chat> tell me what files are in this project
@@ -53,8 +50,6 @@ This project contains HTML, CSS, and related assets for a webpage.
 chat> does this project have a stylesheet?
 Yes, the project includes a CSS file for styling the page.
 ```
-
-## Example: Markdown Compiler
 
 This example shows how the tool can inspect source code and summarize implementation details.
 
@@ -67,8 +62,6 @@ chat> what does this project do?
 This project converts markdown input into another output format based on its compiler logic.
 ```
 
-## Example: Ebay Scraper
-
 This example shows how the tool can read project files and answer higher-level questions about the repository.
 
 ```text
@@ -80,18 +73,7 @@ chat> what libraries does it use?
 I checked the code and identified the main libraries imported by the scraper.
 ```
 
-## Features
-
-- Conversational repository assistant powered by Groq
-- Automatic tool calling for calculate, ls, cat, grep, and compact
-- Manual slash commands for direct tool execution
-- --debug mode that prints tool calls during execution
-- Command-line message support without entering the interactive REPL
-- Tab completion for slash commands and file paths
-- Path safety checks to block absolute paths and directory traversal
-- Conversation compaction to summarize chat history and reduce token usage
-- Doctest-based validation, integration testing, and style checks
-
-## PyPI
-
-PyPI page: [https://pypi.org/project/cmc-cs040-preslie/](https://pypi.org/project/cmc-cs040-preslie/)
+<!-- the features you listed all read like AI slop;
+you want to avoid giving that impression in your technical writing
+the way to make it not sound like slop is weave the features into the examples
+-->
