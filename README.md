@@ -24,17 +24,17 @@ You can also use the program outside the interactive chat for quick one-line que
 
 ### Quick Examples
 
-How to ask a one-line question without entering the interactive chat.
+This example shows how to ask a one-line question without entering the interactive chat:
 ```bash
 $ chat "what is this project about?"
 ```
 
-How to use --debug to print tool calls while the assistant works.
+This example shows how to use --debug to print tool calls while the assistant works:
 ```bash
 $ chat --debug "what files are in the .github folder?"
 ```
 
-How /ls can directly list files in a folder and then give the assistant context for a follow-up question.
+This example shows how /ls can directly list files in a folder and then give the assistant context for a follow-up question:
 ```bash
 $ chat
 chat> /ls .github
@@ -43,7 +43,7 @@ chat> what files are in the .github folder?
 The `.github` folder contains the `workflows` subdirectory.
 ```
 
-How /cat can load a file into the conversation so the assistant can answer questions about it.
+This example shows how /cat can load a file into the conversation so the assistant can answer questions about it:
 ```bash
 $ chat
 chat> /cat README.md
@@ -51,20 +51,20 @@ chat> what does this project do?
 This project is a command-line assistant for exploring repositories with tool support.
 ```
 
-How /calculate can evaluate a mathematical expression directly in the chat.
+This example shows how /calculate can evaluate a mathematical expression directly in the chat:
 ```bash
 $ chat
 chat> /calculate 2+2
 4
 ```
 
-How /grep can search files for matching text or patterns.
+This example shows how /grep can search files for matching text or patterns:
 ```bash
 $ chat
 chat> /grep def cmc_cs040_preslie/tools/*.py
 ```
 
-How /compact can summarize the current chat history to keep the conversation shorter and more efficient.
+This example shows how /compact can summarize the current chat history to keep the conversation shorter and more efficient:
 ```bash
 $ chat
 chat> /compact
@@ -72,8 +72,7 @@ chat> /compact
 
 ## Example: Webpage Project
 
-This example shows how the tool can inspect a web project and answer a question based on repository contents.
-
+This example shows how the tool can inspect a web project and answer a question based on repository contents:
 ```bash
 $ cd test_projects/preslielampitt.github.io
 $ chat
@@ -83,8 +82,7 @@ chat> does this project have a stylesheet?
 Yes, the project includes a CSS file for styling the page.
 ```
 
-This example shows how the tool can inspect source code and summarize implementation details.
-
+This example shows how the tool can inspect source code and summarize implementation details:
 ```bash
 $ cd test_projects/markdown-compiler
 $ chat
@@ -94,8 +92,7 @@ chat> what does this project do?
 This project converts markdown input into another output format based on its compiler logic.
 ```
 
-This example shows how the tool can read project files and answer higher-level questions about the repository.
-
+This example shows how the tool can read project files and answer higher-level questions about the repository:
 ```bash
 $ cd test_projects/ebay-webscraper
 $ chat
