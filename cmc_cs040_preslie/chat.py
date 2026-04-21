@@ -173,6 +173,51 @@ class Chat:
 COMMANDS = ['ls', 'cat', 'grep', 'calculate', 'compact']
 
 
+def initialize_chat():
+    '''
+    Create a chat session for the current repository and preload AGENTS.md.
+    >>> import os
+    >>> import tempfile
+    >>> old = os.getcwd()
+    >>> with tempfile.TemporaryDirectory() as d:
+    ...     os.chdir(d)
+    ...     try:
+    ...         initialize_chat()
+    ...     except SystemExit:
+    ...         pass
+    ...     finally:
+    ...         os.chdir(old)
+    Error: this program must be run from a repository root containing a .git folder.
+    >>> with tempfile.TemporaryDirectory() as d:
+    ...     os.chdir(d)
+    ...     os.mkdir('.git')
+    ...     with open('AGENTS.md', 'w') as f:
+    ...         _ = f.write('Use short answers.')
+    ...     chat = initialize_chat()
+    ...     'Use short answers.' in chat.messages[-1]['content']
+    ...     os.chdir(old)
+    True
+    '''
+    if not os.path.isdir('.git'):
+        print('Error: this program must be run from a repository root containing a .git folder.')
+        raise SystemExit(1)
+
+    chat = Chat()
+
+    if os.path.isfile('AGENTS.md'):
+        agents_text = cat('AGENTS.md')
+        chat.messages.append({
+            'role': 'user',
+            'content': 'Here are the repository instructions from AGENTS.md.'
+        })
+        chat.messages.append({
+            'role': 'assistant',
+            'content': agents_text
+        })
+
+    return chat
+
+
 def command_completer(text, state):
     '''
     Return the next tab-completion match for slash commands or file paths.
@@ -247,7 +292,7 @@ def repl(temperature=0.8, debug=False):
     readline.parse_and_bind("tab: complete")
     readline.parse_and_bind("bind ^I rl_complete")
     readline.set_completer(command_completer)
-    chat = Chat()
+    chat = initialize_chat()
     try:
         while True:
             user_input = input('chat> ')
@@ -332,7 +377,7 @@ def main():
     args = parser.parse_args()
 
     if args.message:
-        chat = Chat()
+        chat = initialize_chat()
         message = ' '.join(args.message)
         print(chat.send_message(message, debug=args.debug))
     else:
