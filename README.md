@@ -70,6 +70,56 @@ $ chat
 chat> /compact
 ```
 
+## Agent In Action
+
+These examples show the agent creating and deleting files in the repository and recording those changes in git.
+
+### Creating a File
+
+This example shows the agent creating a new Python file from a natural-language request and saving the result in a new commit.
+
+```bash
+$ git log --oneline -n 3
+d53a23c (HEAD -> agent, origin/agent) added new tools that allow an agent to write and remove python files
+
+$ docsum-chat
+chat> create a hello_world python file
+Created `hello_world.py` containing a simple `main` function that prints “Hello, world!” when run.
+chat> ^D
+
+$ git log --oneline -n 3
+7ffa22f (HEAD -> agent) [docchat] Add hello_world script
+d53a23c (origin/agent) added new tools that allow an agent to write and remove python files
+
+$ ls
+AGENTS.md  README.md  hello_world.py  pyproject.toml  requirements.txt
+
+$ cat hello_world.py
+def main():
+    print("Hello, world!")
+
+if __name__ == "__main__":
+    main()
+```
+
+### Deleting a File
+This example shows the agent removing a file and creating a commit that records the deletion.
+
+```bash
+$ docsum-chat
+chat> remove the hello_world.py
+The file `hello_world.py` has been removed.
+chat> ^D
+
+$ git log --oneline -n 3
+8bed891 (HEAD -> agent) [docchat] rm hello_world.py
+7ffa22f [docchat] Add hello_world script
+d53a23c (origin/agent) added new tools that allow an agent to write and remove python files
+
+$ ls
+AGENTS.md  README.md  pyproject.toml  requirements.txt
+```
+
 ## Example: Webpage Project
 
 This example shows how the tool can inspect a web project and answer a question based on repository contents:
