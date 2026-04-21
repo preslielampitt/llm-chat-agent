@@ -5,3 +5,4 @@ dist/
 .coverage
 .pytest_cache
 *.egg-info
+coverage.xml

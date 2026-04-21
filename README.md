@@ -13,7 +13,7 @@ Project Chat Agent is a command-line assistant that answers questions about file
 ## Usage
 
 ```bash
-chat
+docsum-chat
 ```
 
 Once running, type your messages and press Enter. Use `Ctrl+C` to exit.

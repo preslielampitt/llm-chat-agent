@@ -1,5 +1,6 @@
 groq
 python-dotenv
+GitPython
 pytest
 coverage
 flake8

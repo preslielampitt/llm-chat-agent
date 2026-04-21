@@ -9,6 +9,10 @@ from .tools.cat import cat, cat_tool_schema
 from .tools.ls import ls, ls_tool_schema
 from .tools.grep import grep, grep_tool_schema
 from .tools.compact import compact, compact_tool_schema
+from .tools.doctests import doctests, doctests_tool_schema
+from .tools.write_file import write_file, write_file_tool_schema
+from .tools.write_files import write_files, write_files_tool_schema
+from .tools.rm import rm, rm_tool_schema
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -67,6 +71,10 @@ class Chat:
             ls_tool_schema,
             grep_tool_schema,
             compact_tool_schema,
+            doctests_tool_schema,
+            write_file_tool_schema,
+            write_files_tool_schema,
+            rm_tool_schema,
         ]
         available_functions = {
             "calculate": calculate,
@@ -74,6 +82,10 @@ class Chat:
             "cat": cat,
             "grep": grep,
             "compact": compact,
+            "doctests": doctests,
+            "write_file": write_file,
+            "write_files": write_files,
+            "rm": rm,
         }
 
         max_rounds = 5
@@ -124,6 +136,14 @@ class Chat:
                         print(f"[tool] /grep {function_args.get('pattern')} {function_args.get('path')}")
                     elif function_name == "compact":
                         print("[tool] /compact")
+                    elif function_name == "doctests":
+                        print(f"[tool] /doctests {function_args.get('path')}")
+                    elif function_name == "write_file":
+                        print(f"[tool] /write_file {function_args.get('path')}")
+                    elif function_name == "write_files":
+                        print("[tool] /write_files")
+                    elif function_name == "rm":
+                        print(f"[tool] /rm {function_args.get('path')}")
 
                 if function_name == "calculate":
                     function_response = function_to_call(
@@ -154,6 +174,25 @@ class Chat:
                             "content": f"Conversation summary:\n{function_response}"
                         }
                     ]
+                elif function_name == "doctests":
+                    function_response = function_to_call(
+                        path=function_args.get("path")
+                    )
+                elif function_name == "write_file":
+                    function_response = function_to_call(
+                        path=function_args.get("path"),
+                        contents=function_args.get("contents", ""),
+                        commit_message=function_args.get("commit_message", ""),
+                    )
+                elif function_name == "write_files":
+                    function_response = function_to_call(
+                        files=function_args.get("files", []),
+                        commit_message=function_args.get("commit_message", ""),
+                    )
+                elif function_name == "rm":
+                    function_response = function_to_call(
+                        path=function_args.get("path")
+                    )
 
                 self.messages.append({
                     "tool_call_id": tool_call.id,
@@ -170,7 +209,7 @@ class Chat:
         return result
 
 
-COMMANDS = ['ls', 'cat', 'grep', 'calculate', 'compact']
+COMMANDS = ['ls', 'cat', 'grep', 'calculate', 'compact', 'doctests', 'rm']
 
 
 def initialize_chat():
@@ -323,6 +362,11 @@ def repl(temperature=0.8, debug=False):
                             response = 'Usage: /grep <pattern> <path>'
                         else:
                             response = grep(grep_parts[0], grep_parts[1])
+                elif command == 'doctests':
+                    if arg is None:
+                        response = 'Usage: /doctests <path>'
+                    else:
+                        response = doctests(arg)
                 elif command == 'compact':
                     response = compact(chat.messages)
                     chat.messages = [
@@ -335,6 +379,11 @@ def repl(temperature=0.8, debug=False):
                             "content": f"Conversation summary:\n{response}"
                         }
                     ]
+                elif command == 'rm':
+                    if arg is None:
+                        response = 'Usage: /rm <path>'
+                    else:
+                        response = rm(arg)
                 else:
                     response = 'Unknown command'
 
